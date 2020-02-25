@@ -1,23 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Dashboard from "../components/Dashboard"
 
 const Home = () => import('../views/Home');
 const Favorites = () => import("../views/Favorites");
 
 const routes = [{
-    path: '/weather',
-    component: Dashboard,
-    children: [{
-        path: 'home',
-        component: Home
-    },
-    {
-        path: 'favorties',
-        component: Favorites
-    }
-    ]
-}]
+    path: '/weather/home',
+    component: Home,
+}, {
+    path: '/weather/favorites',
+    component: Favorites
+}
+]
 
 Vue.use(Router)
 

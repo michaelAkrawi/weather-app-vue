@@ -1,31 +1,30 @@
-
-
 <template>
-  <div>
-    <v-app-bar color="rgb(120, 70, 161)" dark dense>
-      <v-toolbar-title>Herolo Weather</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>mdi-home</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-    </v-app-bar>
+  <v-app>
+    <div>
+      <v-app-bar color="rgb(120, 70, 161)" dark dense>
+        <v-toolbar-title>Herolo Weather</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <router-link title="Home" to="/weather/home" class="app-bar-link">
+          <v-icon>mdi-home</v-icon>
+        </router-link>
 
-    <dashboard></dashboard>
-  </div>
+        <router-link title="Favorites" to="/weather/favorites" class="app-bar-link">
+          <v-icon>mdi-heart</v-icon>
+        </router-link>
+      </v-app-bar>
+    </div>
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+    <notifications group="alerts" position="bottom right" />
+  </v-app>
 </template>
 
 <script>
-import Dashboard from "./components/Dashboard";
-
 export default {
   name: "App",
 
-  components: {
-    Dashboard
-  },
+  components: {},
 
   data: () => ({
     //
@@ -38,5 +37,11 @@ export default {
 
 body {
   font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+}
+
+.app-bar-link {
+  text-decoration: none;
+  margin-left: 0.675rem;
 }
 </style>
