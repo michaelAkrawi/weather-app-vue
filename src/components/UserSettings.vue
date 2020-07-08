@@ -10,12 +10,7 @@
         v-model="temperatureUnits"
       ></v-switch>
       <div>Celcius</div>
-    </div>
-    <div class="switch-wrapper">
-      <div>Light</div>
-      <v-switch value="John"></v-switch>
-      <div>Dark</div>
-    </div>
+    </div>  
   </v-navigation-drawer>
 </template>
 
@@ -40,8 +35,7 @@ export default {
   },
   data() {
     return {
-      temperatureUnits: "",
-      theme: "light",
+      temperatureUnits: "",      
       drawer: this.value
     };
   },
