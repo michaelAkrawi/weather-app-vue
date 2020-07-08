@@ -8,6 +8,14 @@ import Notifications from 'vue-notification'
 Vue.config.productionTip = false
 Vue.use(Notifications);
 
+Vue.config.errorHandler = (err, vm) => {
+  vm.$notify({
+    group: "alerts",
+    title: "Ooops",
+    text: 'Something went wrong',
+    type: "error"
+  });    
+}
 
 new Vue({
   store,
