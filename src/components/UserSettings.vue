@@ -20,8 +20,16 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: ["value"],
+  computed: {
+    ...mapGetters(["getUnits"])
+  },
+  created() {
+    this.temperatureUnits = this.getUnits;
+  },
   watch: {
     value() {
       this.drawer = this.value;
@@ -32,7 +40,7 @@ export default {
   },
   data() {
     return {
-      temperatureUnits: "f",
+      temperatureUnits: "",
       theme: "light",
       drawer: this.value
     };
@@ -40,7 +48,7 @@ export default {
 
   methods: {
     onUnitTypeChangeHandler() {
-      this.$store.dispatch("setUnits", this.settings.temperatureUnits);
+      this.$store.dispatch("setUnits", this.temperatureUnits);
     }
   }
 };
