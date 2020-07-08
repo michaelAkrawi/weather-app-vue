@@ -5,16 +5,20 @@
     <div>
       <img :src="getIconURL()" />
     </div>
-    <div>{{getAverageTemp()}} °F</div>
+    <div>{{getAverageTemp()}} °{{getUnits.toUpperCase()}}</div>
   </div>
 </template>
 
 <script>
 import { getDayText } from "../helpers/helper";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
     forecast: Object
+  },
+  computed: {
+    ...mapGetters(["getUnits"])
   },
   methods: {
     getDay() {
@@ -26,7 +30,7 @@ export default {
       return `https://developer.accuweather.com/sites/default/files/${identifier}-s.png`;
     },
     getAverageTemp() {
-     const {
+      const {
         Temperature: { Maximum }
       } = this.forecast;
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="query-location-wrapper">
       <v-autocomplete
         :items="items"
@@ -25,7 +25,7 @@ import CityWeather from "../components/CityWeather";
 export default {
   data() {
     return {
-      selectedCity: {key : 215854, text: 'Tel Aviv'},
+      selectedCity: { key: 215854, text: "Tel Aviv" },
       loading: false,
       search: null,
       items: []
@@ -34,7 +34,23 @@ export default {
   components: {
     CityWeather
   },
-  created() {},
+  created() {
+    const { city } = this.$route.params;
+    if (city !== undefined) {
+      this.selectedCity = city;
+    }
+
+    // if (window.navigator.geolocation) {
+    //   window.navigator.getCurrentPosition(
+    //     position => {
+    //       console.log(position);
+    //     },
+    //     () => {
+    //       console.log("failed to get youur location");
+    //     }
+    //   );
+    // }      
+  },
   watch: {
     search(val) {
       if (val !== "") {
@@ -52,7 +68,7 @@ export default {
             }
           })
           .catch(error => {
-            console.log(error);
+            console.error(error);
           })
           .finally(() => {
             this.loading = false;
@@ -63,13 +79,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .query-location-wrapper {
   display: flex;
   justify-content: center;
-}
-
-.query-location {
-  max-width: 50vw;
+  .query-location {
+    max-width: 50vw;
+  }
 }
 </style>
+

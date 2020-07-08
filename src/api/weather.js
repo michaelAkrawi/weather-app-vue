@@ -10,6 +10,6 @@ export function getLocationWeather(locationKey) {
     return api.get(`/currentconditions/v1/${locationKey}?apikey=${AppConfig.appKey}`);
 }
 
-export function getWeeklyForecast(locationKey) {
-    return api.get(`/forecasts/v1/daily/5day/${locationKey}?apikey=${AppConfig.appKey}`);
+export function getWeeklyForecast(locationKey, celsius = false) {
+    return api.get(`/forecasts/v1/daily/5day/${locationKey}?apikey=${AppConfig.appKey}&metric=${celsius}`);
 }

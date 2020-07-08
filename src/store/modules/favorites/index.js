@@ -23,7 +23,6 @@ const mutations = {
         localStorage.setItem(storageKey, JSON.stringify(state.favorites));
     },
     removeFavoriteCityHandler(state, city) {
-        debugger;
         const index = state.favorites.findIndex(f => {
             return f.key == city.key;
         })

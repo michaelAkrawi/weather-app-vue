@@ -1,8 +1,8 @@
 <template>
-  <div class="favorite-city">
+  <div class="favorite-city" @click="showWeeklyForecast">
     <h3>{{city.text}}</h3>
     <h2>{{description}}</h2>
-    <div>{{temperature}}</div>
+    <div>{{temperature}} °F</div>
   </div>
 </template>   
   
@@ -32,8 +32,11 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         });
+    },
+    showWeeklyForecast() {
+      this.$router.push({ name: "home", params: { city: this.city } });
     }
   }
 };
@@ -50,5 +53,6 @@ export default {
   margin: 0rem 0.75rem 0rem 0.75rem;
   width: 15rem;
   margin-bottom: 1rem;
+  cursor: pointer;
 }
 </style>

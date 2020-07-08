@@ -4,7 +4,7 @@
       <favorite-city v-for="c in cities" :city="c" v-bind:key="c.key"></favorite-city>
     </template>
     <template v-else>
-      <h3>You dont have any favorites selected</h3>
+      <h3 class="no-favorites-message">Your Favorites List Is Empty</h3>
     </template>
   </div>
 </template>
@@ -25,9 +25,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .favorites-cities-wrapper {
   display: flex;
   justify-content: center;
+  .no-favorites-message {    
+    font-style: italic;
+  }
 }
 </style>
+

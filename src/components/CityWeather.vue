@@ -4,7 +4,7 @@
       <div class="city-weather-header">
         <div>
           <div>{{city.text}}</div>
-          <div>{{temperature}}</div>
+          <div>{{temperature}} °{{getUnits.toUpperCase()}}</div>
         </div>
         <div>
           <v-btn icon title="Add To Favorites" @click="handleFavorites">
@@ -26,6 +26,8 @@
 <script>
 import { getLocationWeather, getWeeklyForecast } from "../api/weather";
 import DailyForecast from "./DailyForecast";
+import { mapGetters } from "vuex";
+import _ from "lodash";
 
 export default {
   components: {
@@ -36,15 +38,19 @@ export default {
       return this.city.key;
     },
     isFavorite() {
-      const item = this.$store.getters.getUserFavorites.find(f => {
+      const item = this.getUserFavorites.find(f => {
         return f.key == this.city.key;
       });
 
       return item !== undefined;
-    }
+    },
+    ...mapGetters(["getUnits", "getUserFavorites"])
   },
   watch: {
     cityKey() {
+      this.getWeather();
+    },
+    getUnits(){
       this.getWeather();
     }
   },
@@ -63,27 +69,33 @@ export default {
   },
   methods: {
     getWeather() {
+      const vm = this;   
       getLocationWeather(this.city.key)
         .then(response => {
           if (response.status == 200) {
             if (response.data.length > 0) {
               this.description = response.data[0].WeatherText;
-              this.temperature = response.data[0].Temperature.Imperial.Value;
+              const t = _.pickBy(response.data[0].Temperature, value => {
+                return value.Unit.toLowerCase() === vm.getUnits;
+              });
+              this.temperature = t[Object.keys(t)[0]].Value;
             }
           }
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         });
 
-      getWeeklyForecast(this.city.key)
+      debugger;
+
+      getWeeklyForecast(this.city.key, this.getUnits.toLowerCase() == "c")
         .then(ressponse => {
           if (ressponse.status == 200) {
             this.forecast = ressponse.data.DailyForecasts;
           }
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         });
     },
     handleFavorites() {
