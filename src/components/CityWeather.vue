@@ -86,8 +86,6 @@ export default {
           console.error(error);
         });
 
-      debugger;
-
       getWeeklyForecast(this.city.key, this.getUnits.toLowerCase() == "c")
         .then(ressponse => {
           if (ressponse.status == 200) {

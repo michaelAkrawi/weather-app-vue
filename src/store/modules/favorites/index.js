@@ -1,7 +1,7 @@
-const storageKey = 'user-favorites';
+
 
 const state = {
-    favorites: localStorage.getItem(storageKey) ? JSON.parse(localStorage.getItem(storageKey)) : []
+    favorites: []
 }
 
 const getters = {
@@ -20,7 +20,6 @@ const actions = {
 const mutations = {
     storeFavoriteCityHandler(state, city) {
         state.favorites.push(city);
-        localStorage.setItem(storageKey, JSON.stringify(state.favorites));
     },
     removeFavoriteCityHandler(state, city) {
         const index = state.favorites.findIndex(f => {
@@ -28,7 +27,6 @@ const mutations = {
         })
         if (index != -1) {
             state.favorites.splice(index, 1);
-            localStorage.setItem(storageKey, JSON.stringify(state.favorites));
         }
     }
 }

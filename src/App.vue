@@ -22,49 +22,24 @@
       <router-view></router-view>
     </v-container>
 
-    <v-navigation-drawer class="settings-drawer" v-model="settingsDrawer" absolute temporary right>
-      <v-subheader>Settings</v-subheader>
-      <div class="switch-wrapper">
-        <div>Fahrenheit</div>
-        <v-switch
-          @change="onUnitTypeChangeHandler"
-          false-value="f"
-          true-value="c"
-          v-model="settings.temperatureUnits"
-        ></v-switch>
-        <div>Celcius</div>
-      </div>
-      <div class="switch-wrapper">
-        <div>Light</div>
-        <v-switch value="John"></v-switch>
-        <div>Dark</div>
-      </div>
-    </v-navigation-drawer>
+    <user-settings v-model="settingsDrawer"></user-settings>
 
     <notifications group="alerts" position="bottom right" />
   </v-app>
 </template>
 
 <script>
+import UserSettings from "./components/UserSettings";
+
 export default {
   name: "App",
-
-  components: {},
-
+  components: {
+    UserSettings
+  },
   data() {
     return {
-      settingsDrawer: false,
-      settings: {
-        temperatureUnits: "f",
-        theme: "light"
-      }
+      settingsDrawer: false
     };
-  },
-  methods: {
-    onUnitTypeChangeHandler() {
-      debugger;
-      this.$store.dispatch("setUnits", this.settings.temperatureUnits);
-    }
   }
 };
 </script>
