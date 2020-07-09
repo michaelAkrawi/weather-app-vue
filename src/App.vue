@@ -63,6 +63,9 @@ html {
         justify-content: space-between;
       }
     }
+    .container {
+      overflow-y: auto;
+    }
   }
 }
 </style>>
