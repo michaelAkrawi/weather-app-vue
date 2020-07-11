@@ -53,7 +53,6 @@ export default {
   flex-direction: column;
   align-items: center;
   margin: 0rem 0.75rem 0rem 0.75rem;
-  width: 15rem;
   margin-bottom: 1rem;
 }
 </style>

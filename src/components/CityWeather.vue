@@ -7,7 +7,11 @@
           <div>{{temperature}} °{{getUnits.toUpperCase()}}</div>
         </div>
         <div>
-          <v-btn icon title="Add To Favorites" @click="handleFavorites">
+          <v-btn
+            icon
+            :title="isFavorite ?  'remove from favorites' : 'add to favorties'"
+            @click="handleFavorites"
+          >
             <v-icon :class="{'favorite-city' : isFavorite}">mdi-heart</v-icon>
           </v-btn>
         </div>
@@ -50,7 +54,7 @@ export default {
     cityKey() {
       this.getWeather();
     },
-    getUnits(){
+    getUnits() {
       this.getWeather();
     }
   },
@@ -69,7 +73,7 @@ export default {
   },
   methods: {
     getWeather() {
-      const vm = this;   
+      const vm = this;
       getLocationWeather(this.city.key)
         .then(response => {
           if (response.status == 200) {
@@ -109,7 +113,7 @@ export default {
         this.$store.dispatch("removeFavoriteCity", this.city);
         this.$notify({
           group: "alerts",
-          title: "Ooops",
+          title: "Sorry",
           text: `${this.city.text} is no longer one of your favorites cities`,
           type: "warn"
         });
@@ -119,32 +123,34 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .city-weather-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  .city-weather-header {
+    display: flex;
+    justify-content: space-between;
+    .favorite-city {
+      color: #e53935 !important;
+    }
+  }
+  .city-weather-desctiption {
+    display: flex;
+    justify-content: center;
+  }
+  .city-weekly-forceast {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    > div {
+      flex-basis: 17%;
+    }
+  }
 }
+</style>
 
-.city-weather-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.city-weather-desctiption {
-  display: flex;
-  justify-content: center;
-}
-
-.city-weekly-forceast {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.favorite-city {
-  color: #e53935 !important;
-}
+<style scoped>
 </style>
 
 <style>

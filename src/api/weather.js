@@ -13,3 +13,7 @@ export function getLocationWeather(locationKey) {
 export function getWeeklyForecast(locationKey, celsius = false) {
     return api.get(`/forecasts/v1/daily/5day/${locationKey}?apikey=${AppConfig.appKey}&metric=${celsius}`);
 }
+
+export function fetchGeoposition(lat, lon) {
+    return api.get(`http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${AppConfig.appKey}&q=${lat},${lon}`)
+}

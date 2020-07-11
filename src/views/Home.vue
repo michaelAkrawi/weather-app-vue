@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import { fetchLoacations } from "../api/weather";
+import { fetchLoacations, fetchGeoposition } from "../api/weather";
 import CityWeather from "../components/CityWeather";
 
 export default {
   data() {
     return {
-      selectedCity: { key: 215854, text: "Tel Aviv" },
+      selectedCity: undefined,
       loading: false,
       search: null,
       items: []
@@ -38,18 +38,22 @@ export default {
     const { city } = this.$route.params;
     if (city !== undefined) {
       this.selectedCity = city;
-    }
+    } else if (window.navigator.geolocation) {
+      window.navigator.geolocation.getCurrentPosition(position => {
+        debugger;
 
-    // if (window.navigator.geolocation) {
-    //   window.navigator.getCurrentPosition(
-    //     position => {
-    //       console.log(position);
-    //     },
-    //     () => {
-    //       console.log("failed to get youur location");
-    //     }
-    //   );
-    // }      
+        fetchGeoposition(
+          position.coords.latitude,
+          position.coords.longitude
+        ).then(response => {
+          if (response.status == 200) {
+            this.selectedCity.key = response.data.Key;
+            this.selectedCity.text = response.data.EnglishName;
+          }
+          console.log(response);
+        });
+      });
+    }
   },
   watch: {
     search(val) {
