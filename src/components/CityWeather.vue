@@ -86,8 +86,8 @@ export default {
             }
           }
         })
-        .catch(error => {
-          console.error(error);
+        .catch(() => {
+          this.showError();
         });
 
       getWeeklyForecast(this.city.key, this.getUnits.toLowerCase() == "c")
@@ -96,9 +96,17 @@ export default {
             this.forecast = ressponse.data.DailyForecasts;
           }
         })
-        .catch(error => {
-          console.error(error);
+        .catch(() => {
+          this.showError();
         });
+    },
+    showError() {
+      this.$notify({
+        group: "alerts",
+        title: "Oops",
+        text: `We were unable to get data for selected city`,
+        type: "error"
+      });
     },
     handleFavorites() {
       if (!this.isFavorite) {

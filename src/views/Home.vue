@@ -78,7 +78,7 @@ export default {
             this.$notify({
               group: "alerts",
               title: "Oops",
-              text: `We were unable to get data for selected city`,
+              text: `We were unable to get data for requested city`,
               type: "error"
             });
           })
