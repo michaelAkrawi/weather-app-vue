@@ -40,18 +40,21 @@ export default {
       this.selectedCity = city;
     } else if (window.navigator.geolocation) {
       window.navigator.geolocation.getCurrentPosition(position => {
-        debugger;
-
-        fetchGeoposition(
-          position.coords.latitude,
-          position.coords.longitude
-        ).then(response => {
-          if (response.status == 200) {
-            this.selectedCity.key = response.data.Key;
-            this.selectedCity.text = response.data.EnglishName;
-          }
-          console.log(response);
-        });
+        fetchGeoposition(position.coords.latitude, position.coords.longitude)
+          .then(response => {
+            if (response.status == 200) {
+              this.selectedCity.key = response.data.Key;
+              this.selectedCity.text = response.data.EnglishName;
+            }
+          })
+          .catch(() => {
+            this.$notify({
+              group: "alerts",
+              title: "Oops",
+              text: `Seems like we are having some trubles`,
+              type: "error"
+            });
+          });
       });
     }
   },
@@ -71,8 +74,13 @@ export default {
               });
             }
           })
-          .catch(error => {
-            console.error(error);
+          .catch(() => {
+            this.$notify({
+              group: "alerts",
+              title: "Oops",
+              text: `We were unable to get data for selected city`,
+              type: "error"
+            });
           })
           .finally(() => {
             this.loading = false;
