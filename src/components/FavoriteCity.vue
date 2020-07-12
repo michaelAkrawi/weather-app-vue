@@ -2,16 +2,22 @@
   <div class="favorite-city" @click="showWeeklyForecast">
     <h3>{{city.text}}</h3>
     <h2>{{description}}</h2>
-    <div>{{temperature}} °F</div>
+    <div>{{temperature}} ° {{getUnits.toUpperCase()}}</div>
   </div>
 </template>   
   
 <script>
 import { getLocationWeather } from "../api/weather";
+import { mapGetters } from "vuex";
+import _ from "lodash";
+
 
 export default {
   props: {
     city: Object
+  },
+  computed: {
+    ...mapGetters(["getUnits"])
   },
   data() {
     return {
@@ -24,11 +30,15 @@ export default {
   },
   methods: {
     fetchCityWeather() {
+      const vm = this;
       getLocationWeather(this.city.key)
         .then(response => {
           if (response.status == 200) {
             this.description = response.data[0].WeatherText;
-            this.temperature = response.data[0].Temperature.Imperial.Value;
+            const t = _.pickBy(response.data[0].Temperature, value => {
+              return value.Unit.toLowerCase() === vm.getUnits;
+            });
+            this.temperature = t[Object.keys(t)[0]].Value;
           }
         })
         .catch(error => {
