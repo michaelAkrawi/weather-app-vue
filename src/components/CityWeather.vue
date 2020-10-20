@@ -4,23 +4,23 @@
       <div class="city-weather-header">
         <div>
           <div>{{city.text}}</div>
-          <div>{{temperature}} °{{getUnits.toUpperCase()}}</div>
+          <div>{{state.temperature}} °{{getUnits.toUpperCase()}}</div>
         </div>
         <div>
           <v-btn
             icon
             :title="isFavorite ?  'remove from favorites' : 'add to favorties'"
-            @click="handleFavorites"
+            @click="setFavoriteState"
           >
             <v-icon :class="{'favorite-city' : isFavorite}">mdi-heart</v-icon>
           </v-btn>
         </div>
       </div>
       <div class="city-weather-desctiption mt-4">
-        <h2>{{description}}</h2>
+        <h2>{{state.description}}</h2>
       </div>
       <div class="city-weekly-forceast">
-        <daily-forecast v-bind:key="f.Date" v-for="f in forecast" :forecast="f"></daily-forecast>
+        <daily-forecast v-bind:key="f.Date" v-for="f in state.forecast" :forecast="f"></daily-forecast>
       </div>
     </div>
   </div>
@@ -29,105 +29,81 @@
 
 <script>
 import { getLocationWeather, getWeeklyForecast } from "../api/weather";
+import { reactive, watch, computed } from "@vue/composition-api";
+import { useGetters } from "vuex-composition-helpers";
+
 import DailyForecast from "./DailyForecast";
-import { mapGetters } from "vuex";
 import _ from "lodash";
 
 export default {
   components: {
-    DailyForecast
+    DailyForecast,
   },
-  computed: {
-    cityKey() {
-      return this.city.key;
-    },
-    isFavorite() {
-      const item = this.getUserFavorites.find(f => {
-        return f.key == this.city.key;
-      });
-
-      return item !== undefined;
-    },
-    ...mapGetters(["getUnits", "getUserFavorites"])
-  },
-  watch: {
-    cityKey() {
-      this.getWeather();
-    },
-    getUnits() {
-      this.getWeather();
-    }
-  },
-  created() {
-    this.getWeather();
-  },
-  props: {
-    city: Object
-  },
-  data() {
-    return {
+  setup(props, { root }) {
+    const state = reactive({
       temperature: "",
       description: "",
-      forecast: []
+      forecast: [],
+    });
+
+    const { getUnits, getUserFavorites } = useGetters([
+      "getUnits",
+      "getUserFavorites",
+    ]);
+    const isFavorite = computed(
+      () =>
+        getUserFavorites.value.find((c) => c.key == props.city.key) !==
+        undefined
+    );
+
+    watch(
+      () => props.city.key,
+      () => {
+        getWeather();
+        setForecast();
+      }
+    );
+    watch(() => getUnits, getWeather);
+
+    function getWeather() {
+      getLocationWeather(props.city.key).then((response) => {
+        if (response.status == 200) {
+          if (response.data.length > 0) {
+            state.description = response.data[0].WeatherText;
+            const t = _.pickBy(response.data[0].Temperature, (value) => {
+              return value.Unit.toLowerCase() === getUnits.value;
+            });
+            state.temperature = t[Object.keys(t)[0]].Value;
+          }
+        }
+      });
+    }
+
+    function setForecast() {
+      getWeeklyForecast(props.city.key, true).then((response) => {
+        if (response.status == 200)
+          state.forecast = response.data.DailyForecasts;
+      });
+    }
+
+    function setFavoriteState() {
+      if (isFavorite.value)
+        root.$store.dispatch("storeFavoriteCity", props.city);
+      else root.$store.dispatch("removeFavoriteCity", props.city);
+      
+    }
+
+    return {
+      state,
+      isFavorite,
+      setFavoriteState,
+      getUnits,
     };
   },
-  methods: {
-    getWeather() {
-      const vm = this;
-      getLocationWeather(this.city.key)
-        .then(response => {
-          if (response.status == 200) {
-            if (response.data.length > 0) {
-              this.description = response.data[0].WeatherText;
-              const t = _.pickBy(response.data[0].Temperature, value => {
-                return value.Unit.toLowerCase() === vm.getUnits;
-              });
-              this.temperature = t[Object.keys(t)[0]].Value;
-            }
-          }
-        })
-        .catch(() => {
-          this.showError();
-        });
 
-      getWeeklyForecast(this.city.key, this.getUnits.toLowerCase() == "c")
-        .then(ressponse => {
-          if (ressponse.status == 200) {
-            this.forecast = ressponse.data.DailyForecasts;
-          }
-        })
-        .catch(() => {
-          this.showError();
-        });
-    },
-    showError() {
-      this.$notify({
-        group: "alerts",
-        title: "Oops",
-        text: `We were unable to get data for selected city`,
-        type: "error"
-      });
-    },
-    handleFavorites() {
-      if (!this.isFavorite) {
-        this.$store.dispatch("storeFavoriteCity", this.city);
-        this.$notify({
-          group: "alerts",
-          title: "Great",
-          text: `${this.city.text} is now one of your favorites cities`,
-          type: "success"
-        });
-      } else {
-        this.$store.dispatch("removeFavoriteCity", this.city);
-        this.$notify({
-          group: "alerts",
-          title: "Sorry",
-          text: `${this.city.text} is no longer one of your favorites cities`,
-          type: "warn"
-        });
-      }
-    }
-  }
+  props: {
+    city: Object,
+  },
 };
 </script>
 
